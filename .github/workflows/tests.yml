@@ -20,17 +20,17 @@ jobs:
               id: cache-poetry
               uses: actions/cache@v3
               with:
-                path: ~/.cache/bin/poetry
+                path: /bin/poetry
                 key: poetry-cache-${{ runner.os }}-${{ env.PYTHON_VERSION }}-${{ env.POETRY_VERSION }}
 
-            - name: Cache Packages ⛄
+            - name: Cache Dev Packages ⛄
               id: cache-packages
               uses: actions/cache@v3
               with:
-                path: ~/.venv
-                key: poetry-${{ runner.os }}-${{ env.PYTHON_VERSION }}-${{ hashFiles('**/poetry.lock') }}-${{ hashFiles('.github/workflows/*.yml') }}
+                path: ./.venv/
+                key: poetry-dev-${{ runner.os }}-${{ env.PYTHON_VERSION }}-${{ hashFiles('**/poetry.lock') }}-${{ hashFiles('.github/workflows/*.yml') }}
                 restore-keys: |
-                  poetry-${{ runner.os }}-${{ env.PYTHON_VERSION }}-
+                  poetry-dev-${{ runner.os }}-${{ env.PYTHON_VERSION }}-
 
             - name: Cache Pre-Commit ⛄
               uses: actions/cache@v3
@@ -46,6 +46,51 @@ jobs:
                   poetry --version
               if: steps.cache-poetry.outputs.cache-hit != 'true'
 
+            - name: Install Dev Packages 🔧
+              run: |
+                  poetry config virtualenvs.in-project true
+                  poetry config virtualenvs.path ~/.venv
+                  poetry env use 3.10.6
+                  poetry install --only dev
+              if: steps.cache-packages.outputs.cache-hit != 'true'
+
+            - name: Run Pre-Commit 🚦
+              uses: pre-commit/action@v3.0.0
+
+    tests:
+        if: github.event.pull_request.draft == false
+        runs-on: ubuntu-latest
+        steps:
+            - name: Check out the repository 💾
+              uses: actions/checkout@v3
+
+            - name: Set up Python 🐍
+              uses: actions/setup-python@v4
+              with:
+                  python-version: "3.10.6"
+
+            - name: Cache Poetry Install Main ⛄
+              id: cache-poetry
+              uses: actions/cache@v3
+              with:
+                path: ~/.cache/bin/poetry
+                key: poetry-cache-${{ runner.os }}-${{ env.PYTHON_VERSION }}-${{ env.POETRY_VERSION }}
+
+            - name: Cache Packages ⛄
+              id: cache-packages
+              uses: actions/cache@v3
+              with:
+                path: ~/.venv
+                key: poetry-${{ runner.os }}-${{ env.PYTHON_VERSION }}-${{ hashFiles('**/poetry.lock') }}-${{ hashFiles('.github/workflows/*.yml') }}
+                restore-keys: |
+                  poetry-${{ runner.os }}-${{ env.PYTHON_VERSION }}-
+
+            - name: Install Poetry 🔧
+              run: |
+                  pipx install poetry
+                  poetry --version
+              if: steps.cache-poetry.outputs.cache-hit != 'true'
+
             - name: Install Packages 🔧
               run: |
                   poetry config virtualenvs.in-project true
@@ -53,9 +98,6 @@ jobs:
                   poetry env use 3.10.6
                   poetry install
               if: steps.cache-packages.outputs.cache-hit != 'true'
-
-            - name: Run Pre-Commit 🚦
-              uses: pre-commit/action@v3.0.0
 
             - name: Run Pytest 🚦
               run: |
