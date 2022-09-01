@@ -50,6 +50,7 @@ jobs:
               run: |
                   poetry config virtualenvs.in-project true
                   poetry config virtualenvs.path ~/.venv
+                  poetry env use 3.10.6
                   poetry install
               if: steps.cache-packages.outputs.cache-hit != 'true'
 
