@@ -21,11 +21,6 @@ jobs:
                   python-version-file: '.python-version'
                   cache: "poetry"
 
-            - name: Debug poetry
-              run: |
-                poetry env info
-                poetry show
-
             - name: Cache Pre-Commit ⛄
               uses: actions/cache@v3
               with:
@@ -35,13 +30,13 @@ jobs:
                       ${{ runner.os }}-precommit-
 
             - name: Install Dev Packages 🔧
-              if: steps.setup-python.outputs.cache-hit != 'true'
               run: |
                   poetry env use ${{steps.setup-python.outputs.python-version}}
                   poetry install
 
             - name: Run Pre-Commit 🚦
-              uses: pre-commit/action@v3.0.0
+              run: poetry run pre-commit run --show-diff-on-failure
+              shell: bash
 
     tests:
         if: github.event.pull_request.draft == false
@@ -61,7 +56,6 @@ jobs:
                   cache: "poetry"
 
             - name: Install Dev Packages 🔧
-              if: steps.setup-python.outputs.cache-hit != 'true'
               run: |
                   poetry env use ${{steps.setup-python.outputs.python-version}}
                   poetry install
