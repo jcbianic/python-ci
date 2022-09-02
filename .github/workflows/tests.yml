@@ -21,6 +21,11 @@ jobs:
                   python-version-file: '.python-version'
                   cache: "poetry"
 
+            - name: Debug poetry
+              run: |
+                poetry env info
+                poetry show
+
             - name: Cache Pre-Commit ⛄
               uses: actions/cache@v3
               with:

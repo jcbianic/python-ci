@@ -8,6 +8,7 @@ version = "0.1.0"
 Flask = ">=2.0.1"
 pydantic = ">=1.8.2"
 python = "3.10.6"
+flask-jeroboam = "^0.0.1a0"
 
 [tool.poetry.group.dev.dependencies]
 black = ">=22.1.0"
