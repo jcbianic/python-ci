@@ -15,9 +15,10 @@ jobs:
               run: pipx install poetry
 
             - name: Set up Python 🐍
+              id: setup-python
               uses: actions/setup-python@v4
               with:
-                  python-version: "3.10.6"
+                  python-version-file: '.python-version'
                   cache: "poetry"
 
             - name: Cache Pre-Commit ⛄
@@ -29,10 +30,10 @@ jobs:
                       ${{ runner.os }}-precommit-
 
             - name: Install Dev Packages 🔧
+              if: steps.setup-python.outputs.cache-hit != true
               run: |
-                  poetry env use 3.10.6
-                  poetry install --only dev
-                  poetry env info
+                  poetry env use {{steps.setup-python.outputs.python-version}}
+                  poetry install
 
             - name: Run Pre-Commit 🚦
               uses: pre-commit/action@v3.0.0
@@ -48,24 +49,17 @@ jobs:
               run: pipx install poetry
 
             - name: Set up Python 🐍
+              id: setup-python
               uses: actions/setup-python@v4
               with:
-                  python-version: "3.10.6"
+                  python-version-file: '.python-version'
                   cache: "poetry"
 
-            - name: Install Poetry 🔧
+            - name: Install Dev Packages 🔧
+              if: steps.setup-python.outputs.cache-hit != true
               run: |
-                  pipx install poetry
-                  poetry --version
-              if: steps.cache-poetry.outputs.cache-hit != 'true'
-
-            - name: Install Packages 🔧
-              run: |
-                  poetry config virtualenvs.in-project true
-                  poetry config virtualenvs.path ~/.venv
-                  poetry env use 3.10.6
+                  poetry env use {{steps.setup-python.outputs.python-version}}
                   poetry install
-              if: steps.cache-packages.outputs.cache-hit != 'true'
 
             - name: Run Pytest 🚦
               run: |
