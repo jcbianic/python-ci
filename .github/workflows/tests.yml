@@ -32,7 +32,7 @@ jobs:
             - name: Install Dev Packages 🔧
               if: steps.setup-python.outputs.cache-hit != true
               run: |
-                  poetry env use {{steps.setup-python.outputs.python-version}}
+                  poetry env use ${{steps.setup-python.outputs.python-version}}
                   poetry install
 
             - name: Run Pre-Commit 🚦
@@ -58,7 +58,7 @@ jobs:
             - name: Install Dev Packages 🔧
               if: steps.setup-python.outputs.cache-hit != true
               run: |
-                  poetry env use {{steps.setup-python.outputs.python-version}}
+                  poetry env use ${{steps.setup-python.outputs.python-version}}
                   poetry install
 
             - name: Run Pytest 🚦
