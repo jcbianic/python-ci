@@ -30,7 +30,7 @@ jobs:
                       ${{ runner.os }}-precommit-
 
             - name: Install Dev Packages 🔧
-              if: steps.setup-python.outputs.cache-hit != true
+              if: steps.setup-python.outputs.cache-hit != 'true'
               run: |
                   poetry env use ${{steps.setup-python.outputs.python-version}}
                   poetry install
@@ -56,7 +56,7 @@ jobs:
                   cache: "poetry"
 
             - name: Install Dev Packages 🔧
-              if: steps.setup-python.outputs.cache-hit != true
+              if: steps.setup-python.outputs.cache-hit != 'true'
               run: |
                   poetry env use ${{steps.setup-python.outputs.python-version}}
                   poetry install
