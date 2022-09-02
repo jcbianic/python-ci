@@ -20,14 +20,14 @@ jobs:
               id: cache-poetry
               uses: actions/cache@v3
               with:
-                path: /bin/poetry
+                path: ~/.cache/poetry
                 key: poetry-cache-${{ runner.os }}-${{ env.PYTHON_VERSION }}-${{ env.POETRY_VERSION }}
 
             - name: Cache Dev Packages ⛄
               id: cache-packages
               uses: actions/cache@v3
               with:
-                path: ./.venv/
+                path: ~/.cache/.venv
                 key: poetry-dev-${{ runner.os }}-${{ env.PYTHON_VERSION }}-${{ hashFiles('**/poetry.lock') }}-${{ hashFiles('.github/workflows/*.yml') }}
                 restore-keys: |
                   poetry-dev-${{ runner.os }}-${{ env.PYTHON_VERSION }}-
@@ -44,6 +44,7 @@ jobs:
               run: |
                   pipx install poetry
                   poetry --version
+                  which poetry
               if: steps.cache-poetry.outputs.cache-hit != 'true'
 
             - name: Install Dev Packages 🔧
