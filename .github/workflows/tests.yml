@@ -15,7 +15,7 @@ jobs:
               uses: actions/cache@v3
               with:
                   path: /opt/pipx/venvs
-                  key: ${{ runner.os }}-pipx-${{ hashFiles('.poetry.lock') }}
+                  key: ${{ runner.os }}-pipx-${{ hashFiles('.poetry.toml') }}
 
             - name: Install poetry
               run: pipx install poetry
@@ -25,7 +25,7 @@ jobs:
               uses: actions/setup-python@v4
               with:
                   python-version-file: '.python-version'
-                  cache: "poetry"
+                  cache: "pip"
 
             - name: Cache Pre-Commit ⛄
               uses: actions/cache@v3
@@ -38,11 +38,11 @@ jobs:
             - name: Install Dev Packages 🔧
               if: steps.setup-python.outputs.cache-hit != 'true'
               run: |
-                  poetry env use ${{steps.setup-python.outputs.python-version}}
-                  poetry install
+                  poetry export --without-hashes --format=requirements.txt > requirements.txt
+                  pip install -r requirements.txt
 
             - name: Run Pre-Commit 🚦
-              run: poetry run pre-commit run --show-diff-on-failure
+              run: pre-commit run --show-diff-on-failure
               shell: bash
 
     tests:
@@ -56,7 +56,7 @@ jobs:
               uses: actions/cache@v3
               with:
                   path: /opt/pipx/venvs
-                  key: ${{ runner.os }}-pipx-${{ hashFiles('.poetry.lock') }}
+                  key: ${{ runner.os }}-pipx-${{ hashFiles('.poetry.toml') }}
 
             - name: Install poetry
               run: pipx install poetry
