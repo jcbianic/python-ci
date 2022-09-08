@@ -16,9 +16,12 @@ jobs:
               with:
                   path: /opt/pipx/venvs
                   key: ${{ runner.os }}-pipx-${{ hashFiles('.poetry.toml') }}
+                  restore-keys: ${{ runner.os }}-pipx-
 
             - name: Install poetry
-              run: pipx install poetry
+              run: |
+                pipx install poetry
+                poetry export --without-hashes --format=requirements.txt > requirements.txt
 
             - name: Set up Python 🐍
               id: setup-python
@@ -38,7 +41,6 @@ jobs:
             - name: Install Dev Packages 🔧
               if: steps.setup-python.outputs.cache-hit != 'true'
               run: |
-                  poetry export --without-hashes --format=requirements.txt > requirements.txt
                   pip install -r requirements.txt
 
             - name: Run Pre-Commit 🚦
