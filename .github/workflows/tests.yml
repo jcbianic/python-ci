@@ -39,7 +39,7 @@ jobs:
                   poetry run pip install -r requirements.txt
 
             - name: Run Pre-Commit 🚦
-              run: pre-commit run --all-files --show-diff-on-failure
+              run: poetry run pre-commit run --all-files --show-diff-on-failure
               shell: bash
 
     tests:
@@ -49,27 +49,24 @@ jobs:
             - name: Check out the repository 💾
               uses: actions/checkout@v3
 
-            - name: Cache Pipx ⛄
-              uses: actions/cache@v3
-              with:
-                  path: /opt/pipx/venvs
-                  key: ${{ runner.os }}-pipx-${{ hashFiles('.poetry.toml') }}
-
-            - name: Install poetry
-              run: pipx install poetry
-
             - name: Set up Python 🐍
               id: setup-python
               uses: actions/setup-python@v4
               with:
                   python-version-file: '.python-version'
-                  cache: "poetry"
+                  cache-dependency-path: poetry.lock
+                  cache: "pip"
+
+            - name: Install poetry
+              run: |
+                pipx install poetry
+                poetry env use ${{ steps.setup-python.outputs.python-version }}
+                poetry export --without-hashes --format=requirements.txt > requirements.txt
 
             - name: Install Dev Packages 🔧
               if: steps.setup-python.outputs.cache-hit != 'true'
               run: |
-                  poetry env use ${{steps.setup-python.outputs.python-version}}
-                  poetry install
+                  poetry run pip install -r requirements.txt
 
             - name: Run Pytest 🚦
               run: |
