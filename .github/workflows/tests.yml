@@ -35,11 +35,11 @@ jobs:
 
             - name: Install Dev Packages 🔧
               run: |
-                  poetry run pip install -r requirements.txt
+                  pip install -r requirements.txt
 
             - name: Run Pre-Commit 🚦
               run: |
-                poetry run pre-commit run --all-files --show-diff-on-failure
+                pre-commit run --all-files --show-diff-on-failure
               shell: bash
 
     tests:
@@ -65,8 +65,8 @@ jobs:
 
             - name: Install Dev Packages 🔧
               run: |
-                  poetry run pip install -r requirements.txt
+                  pip install -r requirements.txt
 
             - name: Run Pytest 🚦
               run: |
-                  poetry run python -m pytest tests --disable-warnings
+                  python -m pytest tests --disable-warnings
