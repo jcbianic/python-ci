@@ -22,6 +22,7 @@ jobs:
             - name: Install poetry
               run: |
                 pipx install poetry
+                echo {{ steps.setup-python.outputs.python-version }}
                 poetry env use {{ steps.setup-python.outputs.python-version }}
                 poetry export --without-hashes --format=requirements.txt > requirements.txt
 
