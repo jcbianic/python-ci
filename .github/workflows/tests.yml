@@ -11,17 +11,18 @@ jobs:
             - name: Check out the repository 💾
               uses: actions/checkout@v3
 
-            - name: Install poetry
-              run: |
-                pipx install poetry
-                poetry export --without-hashes --format=requirements.txt > requirements.txt
-
             - name: Set up Python 🐍
               id: setup-python
               uses: actions/setup-python@v4
               with:
                   python-version-file: '.python-version'
+                  cache-dependency-path: poetry.lock
                   cache: "pip"
+
+            - name: Install poetry
+              run: |
+                pipx install poetry
+                poetry export --without-hashes --format=requirements.txt > requirements.txt
 
             - name: Cache Pre-Commit ⛄
               uses: actions/cache@v3
@@ -37,7 +38,7 @@ jobs:
                   pip install -r requirements.txt
 
             - name: Run Pre-Commit 🚦
-              run: pre-commit run --show-diff-on-failure
+              run: pre-commit run --all-files --show-diff-on-failure
               shell: bash
 
     tests:
