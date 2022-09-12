@@ -19,10 +19,28 @@ jobs:
                   cache-dependency-path: poetry.lock
                   cache: "pip"
 
+            - uses: actions/cache@v3
+              id: cache-python-install
+              with:
+                path: ${{ env.pythonLocation }}
+                key: ${{ env.pythonLocation }}-${{ runner.os }}-${{ hashFiles('poetry.lock') }}
+
+            - name: Cache Requirements.txt
+              id: cache-requirements
+              uses: actions/cache@v3
+              with:
+                  path: requirements.txt
+                  key: ${{ runner.os }}-requirements.txt-${{ hashFiles('poetry.lock') }}
+
             - name: Install poetry
+              if: steps.cache-requirements.outputs.cache-hit != 'true'
               run: |
                 pipx install poetry
                 poetry env use ${{ steps.setup-python.outputs.python-version }}
+
+            - name: Generate requirements.txt
+              if: steps.cache-requirements.outputs.cache-hit != 'true'
+              run: |
                 poetry export --without-hashes --format=requirements.txt --with dev > requirements.txt
 
             - name: Cache Pre-Commit ⛄
@@ -34,6 +52,7 @@ jobs:
                       ${{ runner.os }}-precommit-
 
             - name: Install Dev Packages 🔧
+              if: steps.cache-python-install.outputs.cache-hit != 'true'
               run: |
                   pip install -r requirements.txt
 
@@ -57,13 +76,32 @@ jobs:
                   cache-dependency-path: poetry.lock
                   cache: "pip"
 
+            - uses: actions/cache@v3
+              id: cache-python-install
+              with:
+                path: ${{ env.pythonLocation }}
+                key: ${{ env.pythonLocation }}-${{ runner.os }}-${{ hashFiles('poetry.lock') }}
+
+            - name: Cache Requirements.txt
+              id: cache-requirements
+              uses: actions/cache@v3
+              with:
+                  path: requirements.txt
+                  key: ${{ runner.os }}-requirements.txt-${{ hashFiles('poetry.lock') }}
+
             - name: Install poetry
+              if: steps.cache-requirements.outputs.cache-hit != 'true'
               run: |
                 pipx install poetry
                 poetry env use ${{ steps.setup-python.outputs.python-version }}
+
+            - name: Generate requirements.txt
+              if: steps.cache-requirements.outputs.cache-hit != 'true'
+              run: |
                 poetry export --without-hashes --format=requirements.txt --with dev > requirements.txt
 
             - name: Install Dev Packages 🔧
+              if: steps.cache-python-install.outputs.cache-hit != 'true'
               run: |
                   pip install -r requirements.txt
 
