@@ -22,6 +22,7 @@ jobs:
             - name: Install poetry
               run: |
                 pipx install poetry
+                poetry env use {{ steps.setup-python.outputs.python-version }}
                 poetry export --without-hashes --format=requirements.txt > requirements.txt
 
             - name: Cache Pre-Commit ⛄
@@ -35,7 +36,7 @@ jobs:
             - name: Install Dev Packages 🔧
               if: steps.setup-python.outputs.cache-hit != 'true'
               run: |
-                  pip install -r requirements.txt
+                  poetry run pip install -r requirements.txt
 
             - name: Run Pre-Commit 🚦
               run: pre-commit run --all-files --show-diff-on-failure
