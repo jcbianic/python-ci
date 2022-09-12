@@ -34,7 +34,6 @@ jobs:
                       ${{ runner.os }}-precommit-
 
             - name: Install Dev Packages 🔧
-              if: steps.setup-python.outputs.cache-hit != 'true'
               run: |
                   poetry run pip install -r requirements.txt
 
@@ -65,7 +64,6 @@ jobs:
                 poetry export --without-hashes --format=requirements.txt --with dev > requirements.txt
 
             - name: Install Dev Packages 🔧
-              if: steps.setup-python.outputs.cache-hit != 'true'
               run: |
                   poetry run pip install -r requirements.txt
 
