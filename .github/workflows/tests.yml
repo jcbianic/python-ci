@@ -115,11 +115,6 @@ jobs:
               run: |
                   pip install -r requirements.txt
 
-            - name: Install Dev Packages 🔧
-              if: steps.cache-python-install.outputs.cache-hit != 'true'
-              run: |
-                  pip install -r requirements.txt
-
             - name: Run Pytest 🚦
               run: |
                   python -m pytest tests --disable-warnings
