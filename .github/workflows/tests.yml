@@ -17,7 +17,8 @@ jobs:
               with:
                   python-version-file: '.python-version'
 
-            - uses: actions/cache@v3
+            - name: Cache Python Install
+              uses: actions/cache@v3
               id: cache-python-install
               with:
                 path: ${{ env.pythonLocation }}
@@ -74,7 +75,8 @@ jobs:
               with:
                   python-version-file: '.python-version'
 
-            - uses: actions/cache@v3
+            - name: Cache Python Install
+              uses: actions/cache@v3
               id: cache-python-install
               with:
                 path: ${{ env.pythonLocation }}
